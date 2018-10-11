@@ -1,0 +1,47 @@
+@(message: String, style: String = "scala")( implicit request: RequestHeader )
+@import util.Constants
+@defining(play.core.PlayVersion.current) { version =>
+  <body>
+      <script>
+              var websocket = new WebSocket("@message");
+              websocket.onmessage = function(event) {
+                  var out = document.getElementById("out");
+                  out.textContent = event.data;
+              }
+      </script>
+    <div id="content">
+      <div id="chart">
+        @*<script type="text/javascript">*@
+                @*var charts = new Highcharts.Chart({*@
+                  @*chart: {*@
+                    @*renderTo: 'chart',*@
+                    @*defaultSeriesType: 'spline'*@
+                  @*},*@
+                  @*xAxis: {*@
+                    @*type: 'datetime'*@
+                  @*},*@
+                  @*series: [{*@
+                    @*name: "CPU",*@
+                    @*data: []*@
+                  @*}]*@
+                @*});*@
+        @*</script>*@
+          <h1 id="out">Connecting...</h1>
+      </div>
+
+      @*<script type="text/javascript">*@
+              @*var socket = new WebSocket(@message)*@
+              @*socket.onmessage = function( event ) {*@
+                @*var datapoint = jQuery.parseJSON( event.data );*@
+                @*var chart = charts*@
+
+                @*chart.series[ 0 ].addPoint({*@
+                  @*x: datapoint.cpu.timestamp,*@
+                  @*y: datapoint.cpu.load*@
+                @*}, true, chart.series[ 0 ].data.length >= 50 );*@
+              @*}*@
+      @*</script>*@
+    </div>
+  </body>
+</div>
+}
