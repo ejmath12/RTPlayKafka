@@ -1,5 +1,7 @@
 package services
 
+import akka.kafka.ConsumerMessage.CommittableMessage
+import akka.kafka.scaladsl.Consumer.Control
 import javax.inject.{Inject, Singleton}
 import akka.kafka.scaladsl.{Consumer, Producer}
 import akka.kafka.{ConsumerSettings, Subscriptions}
@@ -14,7 +16,7 @@ import util.Constants
 import scala.util.{Failure, Success, Try}
 
 trait Kafka {
-  def source(topic: String): Try[Source[ConsumerRecord[String, String], _]]
+  def source(topic: String): Try[Source[CommittableMessage[String, String], Control]]
 }
 
 @Singleton
@@ -22,18 +24,19 @@ class KafkaImpl @Inject() (configuration: Configuration) extends Kafka {
 
 
   def consumerSettings: Try[ConsumerSettings[String, String]] = {
-    val deserializer = new StringDeserializer()
     val config = configuration.getOptional[Configuration]("akka.kafka.consumer").getOrElse(Configuration.empty)
     Try {
       ConsumerSettings(config.underlying, new StringDeserializer, new StringDeserializer)
-        .withBootstrapServers(Constants.kafkaUrl)
+        .withBootstrapServers(Constants.kafkaUrl).withGroupId("group1")
+        .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+
     }
   }
 
 
-  def source(topic: String): Try[Source[ConsumerRecord[String, String], _]] = {
+  def source(topic: String): Try[Source[CommittableMessage[String, String], Control]] = {
     val subscriptions = Subscriptions.topics(topic)
-    consumerSettings.map(Consumer.plainSource(_, subscriptions))
+    consumerSettings.map(Consumer.committableSource(_, subscriptions))
   }
 
 }
