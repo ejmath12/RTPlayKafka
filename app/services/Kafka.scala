@@ -1,19 +1,17 @@
 package services
 
 import akka.kafka.ConsumerMessage.CommittableMessage
+import akka.kafka.scaladsl.Consumer
 import akka.kafka.scaladsl.Consumer.Control
-import javax.inject.{Inject, Singleton}
-import akka.kafka.scaladsl.{Consumer, Producer}
 import akka.kafka.{ConsumerSettings, Subscriptions}
-import akka.stream.scaladsl.{Sink, Source}
-import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
+import akka.stream.scaladsl.Source
+import javax.inject.{Inject, Singleton}
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.StringDeserializer
 import play.api.Configuration
 import util.Constants
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 trait Kafka {
   def source(topic: String): Try[Source[CommittableMessage[String, String], Control]]

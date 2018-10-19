@@ -1,20 +1,15 @@
 package controllers
 
 import akka.actor.ActorSystem
-import akka.kafka.{ConsumerSettings, Subscriptions}
-import akka.kafka.scaladsl.Consumer
-import akka.kafka.scaladsl.Consumer.DrainingControl
-import akka.stream.scaladsl.{Flow, Keep, Sink}
+import akka.stream.scaladsl.{Flow, Sink}
 import javax.inject._
-import org.apache.kafka.common.serialization.StringDeserializer
 import play.api.Configuration
-import play.api.libs.json.JsValue
 import play.api.mvc._
 import services.Kafka
 import util.Constants
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
